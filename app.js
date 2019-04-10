@@ -26,7 +26,6 @@ app.use((req, res, next) => {
 	next();
 });
 
-
 app.use('/users', usersRouter);
 app.use('/numbers', numbersRouter);
 app.use('/', rootRouter);
