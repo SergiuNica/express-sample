@@ -1,38 +1,25 @@
 const router= require('express').Router();
-const db = require('../config/db.js');
+const pageModel = require('../model/page');
+const navmenuModel = require('../model/navmenu');
 
-// async function getUsers(){
-//     let connection = await db.getConnection();
-//     const rows = await connection.query("SELECT * FROM user");
-//     connection.end();
-//     return rows;
-// }
-
-async function getPage(pagekey){
-    let connection = await db.getConnection();
-    const rows = await connection.query("SELECT * FROM page WHERE pageKey = ?", [pagekey]);
-    connection.end();
-    return rows;
+const pageRoute = async (pageName, req, res, next) =>{
+    let page = await pageModel.getPage(pageName);
+    let navmenu = await navmenuModel.getNavmenu();
+    if(page[0]){
+    page = page[0];
+    return res.render('root', {title: page.title, page: page, nav: navmenu});
+    } else {
+        next();
+    }
 }
 
-router.get('/', async (req, res)=> {
-    
-    let page = await getPage('home');
-    page = page[0];
-    //let users = await getUsers();
-    //console.log(page);
-    return res.render('root', {title: page.title, page: page});
+router.get('/', async (req, res, next)=> {
+    pageRoute('home', req,res,next )
 });
 
 router.get('/:page', async (req, res, next)=> {
-    let p= req.params.page.toLowerCase();
-    let page = await getPage(p);
-    if(page[0] !==undefined){
-    page = page[0];
-    return res.render('root', {title: page.title, page: page});
-    } else {
-        next();
-    }        
+    let p = req.params.page.toLowerCase();
+    pageRoute(p, req, res, next)   
 });
 
 router.get('/', (req, res)=> res.send('Welcome Home!'));
