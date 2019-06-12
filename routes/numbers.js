@@ -11,10 +11,8 @@ router.get("/:from-:to", (req, res) => {
 	}
 	for (let x = a; x <= b; x++) {
 		nums.push(x);
-		//nums+=`<div>${x}</div>`;
 	}
 	res.render("numbers", { title: "numbers", numbers: nums });
-	//res.send(html);
 });
 
 module.exports = router;
